@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WhatsApp Broadcast</title>
+  <style>
+    body {
+      background-image: url('https://i.ibb.co/FqmCZHV2/IMG-20250402-WA0051.jpg');
+      background-size: cover;
+      background-position: center;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #00f5ff;
+      text-align: center;
+      padding-top: 50px;
+    }
+
+    h1 {
+      font-size: 2em;
+      margin-bottom: 20px;
+      text-shadow: 0 0 10px #00f5ff;
+    }
+
+    input, textarea, button {
+      display: block;
+      margin: 15px auto;
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      width: 80%;
+      max-width: 400px;
+      font-size: 1em;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #00f5ff;
+      box-shadow: 0 0 10px #00f5ff;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #codeDisplay {
+      margin-top: 20px;
+      font-size: 1.5em;
+      text-shadow: 0 0 10px #00f5ff;
+    }
+  </style>
+</head>
+<body>
+  <h1>WhatsApp Broadcast Tool</h1>
+
+  <input id="groupLink" type="text" placeholder="Enter Group Link" />
+  <textarea id="message" placeholder="Enter Message"></textarea>
+  <input id="phone" type="text" placeholder="Enter Phone Number" />
+  <button onclick="generateCode()">Generate Pair Code</button>
+
+  <div id="codeDisplay"></div>
+
+  <script>
+    async function generateCode() {
+      const phone = document.getElementById("phone").value;
+      const groupLink = document.getElementById("groupLink").value;
+      const message = document.getElementById("message").value;
+
+      if (!phone || !groupLink || !message) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/generate-pair-code?phone=${phone}`);
+        const data = await res.json();
+        if (data.pairCode) {
+          const codeText = `Pair Code: ${data.pairCode}`;
+          const display = document.getElementById("codeDisplay");
+          display.textContent = codeText;
+
+          navigator.clipboard.writeText(data.pairCode);
+          alert("Pair Code copied to clipboard!");
+        } else {
+          alert("Error generating code.");
+        }
+      } catch (err) {
+        alert("Failed to generate pair code.");
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
